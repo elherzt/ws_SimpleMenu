@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ws_SimpleMenu", "ws_SimpleMenu\ws_SimpleMenu.csproj", "{77AF8EE0-8B94-4073-BF24-D1351B3CC021}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modelos", "Modelos\Modelos.csproj", "{2C839C3E-393C-473B-921F-D0CA510FACC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{77AF8EE0-8B94-4073-BF24-D1351B3CC021}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77AF8EE0-8B94-4073-BF24-D1351B3CC021}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77AF8EE0-8B94-4073-BF24-D1351B3CC021}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C839C3E-393C-473B-921F-D0CA510FACC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C839C3E-393C-473B-921F-D0CA510FACC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C839C3E-393C-473B-921F-D0CA510FACC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C839C3E-393C-473B-921F-D0CA510FACC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
