@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Modelos;
+using ws_SimpleMenu.Models;
 
 namespace ws_SimpleMenu.Controllers
 {
@@ -10,7 +12,13 @@ namespace ws_SimpleMenu.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            UserContext db = new UserContext();
+            return View(db.Users.ToList());
+        }
+
+        public string codificar(string cadena)
+        {
+            return Encriptar.Encrypt(cadena);
         }
     }
 }
