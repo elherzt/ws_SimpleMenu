@@ -24,4 +24,20 @@ namespace ws_SimpleMenu.Controllers
             return RolOptions.Add(rol);
         }
     }
+
+    public class AddRolToUserController : ApiController
+    {
+        public Response Post(int id_rol, int id_user)
+        {
+            return UserOptions.AddRol(id_rol, id_user);
+        }
+    }
+
+    public class LoginController : ApiController
+    {
+        public Response Post(string user, string password)
+        {
+            return LoginOptions.Autenticar(user, password);
+        }
+    }
 }

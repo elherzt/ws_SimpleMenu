@@ -133,6 +133,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Encriptar.cs" />
+    <Compile Include="Models\LoginOptions.cs" />
     <Compile Include="Models\Response.cs" />
     <Compile Include="Models\RolOptions.cs" />
     <Compile Include="Models\User.cs" />
