@@ -276,7 +276,17 @@ namespace ws_SimpleMenu.Models
            return (db.Users.Where(x => x.username == p.Trim()).ToList().Count == 0) ? true : false;
         }
 
-       
 
+
+
+        internal static User find_by_id(int id_user)
+        {
+            return db.Users.Where(x => x.IdUser == id_user).SingleOrDefault();
+        }
+
+        internal static User find_by_reference_id(int id_reference)
+        {
+            return db.Users.Where(x => x.reference_id == id_reference).SingleOrDefault();
+        }
     }
 }
