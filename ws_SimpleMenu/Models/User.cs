@@ -53,15 +53,26 @@ namespace ws_SimpleMenu.Models
                 {
                     if (isValiIdRol(id_rol))
                     {
-                        Rol_User ru = new Rol_User();
-                        ru.IdRol = getIdRol(id_rol);
-                        ru.IdUser = getIdUser(id_user);
-                        db.Roles_Users.Add(ru);
-                        db.SaveChanges();
-                        response.succes = true;
-                        response.message = "Rol added to user";
-                        response.datos = null;
-                        return response;
+                        var UserId = getIdUser(id_user);
+                        var RolId = getIdRol(id_rol);
+                        if (isNewUserRol(UserId, RolId))
+                        {
+                            Rol_User ru = new Rol_User();
+                            ru.IdRol = RolId;
+                            ru.IdUser = UserId;
+                            db.Roles_Users.Add(ru);
+                            db.SaveChanges();
+                            response.succes = true;
+                            response.message = "Rol added to user";
+                            response.datos = null;
+                            return response;
+                        }
+                        else
+                        {
+                            response.succes = false;
+                            response.message = "The user already has the role";
+                            response.datos = null;
+                        }
                     }
                     else
                     {
@@ -77,6 +88,45 @@ namespace ws_SimpleMenu.Models
                     response.datos = null;
                 }
 
+                return response;
+            }
+            catch(Exception e) {
+                response.succes = false;
+                response.message = e.Message;
+                response.datos = null;
+                return response;
+            }
+        }
+
+        private static bool isNewUserRol(int id_user, int id_rol)
+        {
+            return (db.Roles_Users.Where(x => x.IdRol == id_rol && x.IdUser == id_user).ToList().Count() == 0) ? true : false;
+        }
+
+        public static Response getRoles(int id_user)
+        {
+            Response response = new Response();
+            try {
+                if (isValidIdUser(id_user))
+                {
+                    var UserId = getIdUser(id_user);
+                    var roles_ids = db.Roles_Users.Where(x => x.IdUser == UserId).Select(x => x.IdRol).ToList();
+                    var roles = db.Roles.Where(p => roles_ids.Any(p2 => p2 == p.IdRol)).ToList();
+                    response.succes = true;
+                    response.message = "NO ERROR";
+                    if (roles.Count() > 0)
+                    {
+                        response.datos = roles;
+                    }
+                    else {
+                        response.datos = "User doesn't have roles";
+                    }
+                }
+                else {
+                    response.succes = false;
+                    response.message = "Id reference in not exists or is invalid";
+                    response.datos = null;
+                }
                 return response;
             }
             catch(Exception e) {

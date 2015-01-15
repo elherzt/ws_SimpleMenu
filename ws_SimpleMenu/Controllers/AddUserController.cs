@@ -40,4 +40,12 @@ namespace ws_SimpleMenu.Controllers
             return LoginOptions.Autenticar(user, password);
         }
     }
+
+    public class getUserRolesController : ApiController
+    {
+        public Response Post(int id_user)
+        {
+            return UserOptions.getRoles(id_user);
+        }
+    }
 }
