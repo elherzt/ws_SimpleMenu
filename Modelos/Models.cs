@@ -83,7 +83,7 @@ namespace Modelos
     {
         public UserContext() : base("PruebasConnection")
         {
-            Database.SetInitializer<UserContext>(new DropCreateDatabaseIfModelChanges<UserContext>());
+            Database.SetInitializer<UserContext>(new CreateDatabaseIfNotExists<UserContext>());
         }
         public DbSet<User> Users {get; set;}
         public DbSet<Rol> Roles { get; set; }

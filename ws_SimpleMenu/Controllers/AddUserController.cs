@@ -48,4 +48,12 @@ namespace ws_SimpleMenu.Controllers
             return UserOptions.getRoles(id_user);
         }
     }
+
+    public class getRolesController : ApiController
+    {
+        public Response Post()
+        {
+            return RolOptions.getRoles();
+        }
+    }
 }

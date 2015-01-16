@@ -40,6 +40,26 @@ namespace ws_SimpleMenu.Models
             
         }
 
+
+
+        public static Response getRoles() 
+        {
+            Response response = new Response();
+            try
+            {
+                response.succes = true;
+                response.message = "NO ERROR";
+                response.datos = db.Roles.ToList();
+                return response;
+            }
+            catch(Exception e){
+                response.succes = false;
+                response.message = e.Message;
+                response.datos = null;
+                return response;
+            }
+        }
+
         private static string IsRolValid(Rol rol)
         {
             var message = "";
