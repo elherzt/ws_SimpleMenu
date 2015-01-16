@@ -41,6 +41,14 @@ namespace ws_SimpleMenu.Controllers
         }
     }
 
+    public class getAllInfoUserController : ApiController
+    {
+        public Response get(int id)
+        {
+            return UserOptions.getAllInfoUser(id);
+        }
+    }
+
     public class getUserRolesController : ApiController
     {
         public Response Post(int id_user)
