@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Modelos;
+using ws_SimpleMenu.classes;
 
 namespace ws_SimpleMenu.Models
 {
@@ -49,7 +50,7 @@ namespace ws_SimpleMenu.Models
             {
                 response.succes = true;
                 response.message = "NO ERROR";
-                response.datos = db.Roles.ToList();
+                response.datos = PrettyRoles.parse(db.Roles.ToList());
                 return response;
             }
             catch(Exception e){

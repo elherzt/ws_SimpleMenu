@@ -60,15 +60,15 @@ namespace ws_SimpleMenu.Models
                 {
                     response.succes = true;
                     response.message = "success login";
-                    response.datos = user.First();
-                    createLogin(user.First().IdUser, 1);
+                    response.datos = PrettyUser.parseUserLogin(user.First());
+                    createLogin(user.First().IdUser, user.First().reference_id, 1);
                 }
                 else
                 {
                     response.succes = false;
                     response.message = "login failed";
                     response.datos = null;
-                    createLogin(user.First().IdUser, 2);
+                    createLogin(user.First().IdUser, user.First().reference_id, 2);
                 }
                 return response;
             }
@@ -98,7 +98,7 @@ namespace ws_SimpleMenu.Models
             }
         }
 
-        private static void createLogin(int id_user, int estado)
+        private static void createLogin(int id_user, int id_reference, int estado)
         {
             try
             {
@@ -108,6 +108,7 @@ namespace ws_SimpleMenu.Models
                 System.Web.HttpBrowserCapabilities browser = HttpContext.Current.Request.Browser;
                 Login login = new Login();
                 login.IdUser = id_user;
+                login.id_reference = id_reference;
                 login.date = DateTime.Now;
                 login.browser = browser.Browser;
                 login.ip_address = GetIP();
@@ -144,10 +145,27 @@ namespace ws_SimpleMenu.Models
             }
         }
 
+        public static Response getRecentsLogins(int id_user)
+        {
+            Response response = new Response();
+            try {
+                var user = UserOptions.find_by_reference_id(id_user);
+                response.succes = true;
+                response.message = "NO ERROR";
+                response.datos = user.Logins.OrderByDescending(x => x.IdLogin).Take(2).ToList();
+                return response;
+            }
+            catch(Exception e) {
+                response.succes = false;
+                response.message = e.Message;
+                response.datos = null;
+                return response;
+            }
+        }
+
         private static string GetIP()
         {
             //String strHostName = HttpContext.Current.Request.UserHostAddress.ToString();
-
             //String IPAddress = System.Net.Dns.GetHostAddresses(strHostName).GetValue(0).ToString();
             //return IPAddress;
 

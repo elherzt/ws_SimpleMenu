@@ -56,4 +56,12 @@ namespace ws_SimpleMenu.Controllers
             return RolOptions.getRoles();
         }
     }
+
+    public class getRecentsLoginsController : ApiController
+    {
+        public Response Get(int id_user)
+        {
+            return LoginOptions.getRecentsLogins(id_user);
+        }
+    }
 }
