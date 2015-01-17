@@ -78,7 +78,7 @@ namespace Modelos
         [Key]
         public int IdLock { get; set; }
         public int IdUser { get; set; }
-        public virtual User User { get; set; }
+        // public virtual User User { get; set; }
         public DateTime date { get; set; }
     }
 
