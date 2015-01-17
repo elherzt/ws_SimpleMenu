@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Modelos;
+using ws_SimpleMenu.classes;
 
 namespace ws_SimpleMenu.Models
 {
@@ -38,6 +39,26 @@ namespace ws_SimpleMenu.Models
                 return response;
             }
             
+        }
+
+
+
+        public static Response getRoles() 
+        {
+            Response response = new Response();
+            try
+            {
+                response.succes = true;
+                response.message = "NO ERROR";
+                response.datos = PrettyRoles.parse(db.Roles.ToList());
+                return response;
+            }
+            catch(Exception e){
+                response.succes = false;
+                response.message = e.Message;
+                response.datos = null;
+                return response;
+            }
         }
 
         private static string IsRolValid(Rol rol)

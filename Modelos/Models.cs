@@ -28,6 +28,9 @@ namespace Modelos
         public string password { get; set; }
         public int reference_id { get; set; }
         public bool locked { get; set; }
+        public virtual List<Login> Logins { get; set; }
+        public virtual List<Rol_User> Roles { get; set; }
+        public virtual List<Lock> Locks { get; set; }
     }
 
     public class Rol
@@ -45,7 +48,7 @@ namespace Modelos
         public int IdRol { get; set; }
         public virtual Rol Rol { get; set; }
         public int IdUser { get; set; }
-        public virtual User User { get; set; }
+        //public virtual User User { get; set; }
     }
 
     public class Status
@@ -60,9 +63,10 @@ namespace Modelos
         [Key]
         public int IdLogin { get; set; }
         public int IdUser {get; set; }
-        public virtual User User { get; set; }
+        public int id_reference { get; set; }
+        //public virtual User User { get; set; }
         public int IdStatus { get; set; }
-        public virtual Status Status { get; set; }
+        //public virtual Status Status { get; set; }
         public DateTime date { get; set; }
         public string ip_address { get; set; }
         public string browser { get; set; }
@@ -74,7 +78,7 @@ namespace Modelos
         [Key]
         public int IdLock { get; set; }
         public int IdUser { get; set; }
-        public virtual User User { get; set; }
+        // public virtual User User { get; set; }
         public DateTime date { get; set; }
     }
 
@@ -83,7 +87,7 @@ namespace Modelos
     {
         public UserContext() : base("PruebasConnection")
         {
-            Database.SetInitializer<UserContext>(new DropCreateDatabaseIfModelChanges<UserContext>());
+            Database.SetInitializer<UserContext>(new CreateDatabaseIfNotExists<UserContext>());
         }
         public DbSet<User> Users {get; set;}
         public DbSet<Rol> Roles { get; set; }

@@ -98,6 +98,25 @@ namespace ws_SimpleMenu.Models
             }
         }
 
+        public static Response getAllInfoUser(int id)
+        {
+            Response response = new Response();
+            try
+            {
+                response.succes = true;
+                response.message = "NO ERROR";
+                response.datos = UserOptions.find_by_reference_id(id);
+                return response;
+            }
+            catch(Exception e)
+            {
+                response.succes = false;
+                response.message = e.Message;
+                response.datos = null;
+                return response;
+            }
+        }
+
         private static bool isNewUserRol(int id_user, int id_rol)
         {
             return (db.Roles_Users.Where(x => x.IdRol == id_rol && x.IdUser == id_user).ToList().Count() == 0) ? true : false;
