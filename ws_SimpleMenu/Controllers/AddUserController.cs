@@ -25,6 +25,14 @@ namespace ws_SimpleMenu.Controllers
         }
     }
 
+    public class EditEmailUserController : ApiController
+    {
+        public Response Post(int id_user, string email)
+        {
+            return UserOptions.EditEmail(id_user, email);
+        }
+    }
+
     public class AddRolToUserController : ApiController
     {
         public Response Post(int id_rol, int id_user)

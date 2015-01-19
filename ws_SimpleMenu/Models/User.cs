@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using System.Text;
 using System.Configuration;
+using System.Net.Mail;
 
 namespace ws_SimpleMenu.Models
 {
@@ -37,6 +38,53 @@ namespace ws_SimpleMenu.Models
                 return response;
             }
             catch (Exception e) {
+                response.succes = false;
+                response.message = e.Message;
+                response.datos = null;
+                return response;
+            }
+        }
+
+        public static Response EditEmail(int id_reference, string new_email)
+        {
+            Response response = new Response();
+            try
+            {
+                if (isValidIdUser(id_reference))
+                {
+                    if (isNewEmail(new_email))
+                    {
+                        if (isValidEmail(new_email))
+                        {
+                            var user = find_by_reference_id(id_reference);
+                            user.email = new_email;
+                            db.SaveChanges();
+                            response.succes = true;
+                            response.message = "NO ERROR";
+                            response.datos = null;
+                        }
+                        else {
+                            response.succes = false;
+                            response.message = "Email is not valid";
+                            response.datos = null;
+                        }
+                    }
+                    else
+                    {
+                        response.succes = false;
+                        response.message = "Email current in use";
+                        response.datos = null;
+                    }
+                }
+                else {
+                    response.succes = false;
+                    response.message = "User doesn't exists";
+                    response.datos = null;
+                }
+                return response;
+            }
+            catch(Exception e)
+            {
                 response.succes = false;
                 response.message = e.Message;
                 response.datos = null;
@@ -204,13 +252,11 @@ namespace ws_SimpleMenu.Models
 
         private static string isValid(User user, int? secure)
         {
-            string ValidEmail = @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
-                @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$";
             //string securePass = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$";
             string message = "";
             if (isNewEmail(user.email))
             {
-                if (Regex.IsMatch(ValidEmail, user.email, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)))
+                if (isValidEmail(user.email))
                 {
                     message += "0 Email: invalid,";
                 }
@@ -275,6 +321,31 @@ namespace ws_SimpleMenu.Models
                 message = message = "valid";
             }
             return message;
+        }
+
+        private static bool isValidEmail(string email)
+        {
+            Regex ValidEmail = new Regex(@"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
+            + "@"
+            + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$");
+            Match match = (ValidEmail.Match(email));
+            if (match.Success)
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+            //try
+            //{
+            //    MailAddress m = new MailAddress(email);
+
+            //    return true;
+            //}
+            //catch (FormatException)
+            //{
+            //    return false;
+            //}
         }
 
         private static bool isNewEmail(string p)
