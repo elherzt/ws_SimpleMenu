@@ -194,6 +194,7 @@ namespace ws_SimpleMenu.Models
                 else {
                     var new_token = Guid.NewGuid().ToString();
                     user.token = new_token;
+                    user.register = DateTime.Now;
                     db.SaveChanges();
                     Mailer.send_link_verification(user.email, new_token);
                     return false;
@@ -201,6 +202,7 @@ namespace ws_SimpleMenu.Models
             }catch{
                 var new_token = Guid.NewGuid().ToString();
                 user.token = new_token;
+                user.register = DateTime.Now;
                 db.SaveChanges();
                 Mailer.send_link_verification(user.email, new_token);
                 return false;
