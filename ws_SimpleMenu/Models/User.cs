@@ -20,15 +20,27 @@ namespace ws_SimpleMenu.Models
             Response response = new Response();
             try
             {
-                var message = isValid(user, secure);
+                var message = isValidUser(user, secure);
                 if (message == "valid")
                 {
+                    user.token = Guid.NewGuid().ToString();
+                    user.register = DateTime.Now;
                     user.locked = false;
+                    user.verificated = false;
                     db.Users.Add(user);
                     db.SaveChanges();
-                    response.succes = true;
-                    response.message = "User added";
-                    response.datos = user;
+                    if (Mailer.send_link_verification(user.email, user.token))
+                    {
+                        response.succes = true;
+                        response.message = "User added, verification link send to email";
+                        response.datos = null;
+                    }
+                    else
+                    {
+                        response.succes = false;
+                        response.message = "User added but email is not exists, account not verificated";
+                        response.datos = null;
+                    }
                 }
                 else
                 {
@@ -355,7 +367,7 @@ namespace ws_SimpleMenu.Models
             }
         }
 
-        private static string isValid(User user, int? secure)
+        private static string isValidUser(User user, int? secure)
         {
             //string securePass = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$";
             string message = "";
@@ -444,17 +456,18 @@ namespace ws_SimpleMenu.Models
 
         private static bool isValidEmail(string email)
         {
-            Regex ValidEmail = new Regex(@"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
-            + "@"
-            + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$");
-            Match match = (ValidEmail.Match(email));
-            if (match.Success)
-            {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return Mailer.send_welcome_mail(email);
+            //Regex ValidEmail = new Regex(@"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
+            //+ "@"
+            //+ @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$");
+            //Match match = (ValidEmail.Match(email));
+            //if (match.Success)
+            //{
+            //    return true;
+            //}
+            //else {
+            //    return false;
+            //}
             //try
             //{
             //    MailAddress m = new MailAddress(email);
@@ -469,7 +482,13 @@ namespace ws_SimpleMenu.Models
 
         private static bool isNewEmail(string p)
         {
-            return (db.Users.Where(x => x.email == p).ToList().Count()) == 0 ? true : false;
+            if ((db.Users.Where(x => x.email == p).ToList().Count()) == 0)
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
         private static bool referenceIsValid(int reference_id)
@@ -482,7 +501,13 @@ namespace ws_SimpleMenu.Models
 
         private static bool IsNewUsername(string p)
         {
-           return (db.Users.Where(x => x.username == p.Trim()).ToList().Count == 0) ? true : false;
+            if (db.Users.Where(x => x.username == p.Trim()).ToList().Count == 0)
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
 
@@ -498,13 +523,6 @@ namespace ws_SimpleMenu.Models
             return db.Users.Where(x => x.reference_id == id_reference).SingleOrDefault();
         }
 
-        public static Response send_email (string email)
-        {
-            Response response = new Response();
-            response.succes = Mailer.send_mail(email);
-            response.message = "undefined";
-            response.datos = null;
-            return response;
-        }
+       
     }
 }

@@ -97,11 +97,4 @@ namespace ws_SimpleMenu.Controllers
         }
     }
 
-    public class sendEmailUserController : ApiController
-    {
-        public Response Post(string email)
-        {
-            return UserOptions.send_email(email);
-        }
-    }
 }
