@@ -457,27 +457,6 @@ namespace ws_SimpleMenu.Models
         private static bool isValidEmail(string email)
         {
             return Mailer.send_welcome_mail(email);
-            //Regex ValidEmail = new Regex(@"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
-            //+ "@"
-            //+ @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$");
-            //Match match = (ValidEmail.Match(email));
-            //if (match.Success)
-            //{
-            //    return true;
-            //}
-            //else {
-            //    return false;
-            //}
-            //try
-            //{
-            //    MailAddress m = new MailAddress(email);
-
-            //    return true;
-            //}
-            //catch (FormatException)
-            //{
-            //    return false;
-            //}
         }
 
         private static bool isNewEmail(string p)
