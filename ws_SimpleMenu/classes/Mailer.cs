@@ -4,13 +4,37 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Web;
+using Modelos;
 //using System.Web.Mail;
 
 namespace ws_SimpleMenu.classes
 {
     public class Mailer
     {
-        public static bool send_mail(string mail)
+        static UserContext db = new UserContext();
+
+        public static bool send_welcome_mail(string mail)
+        {
+            string subject = "Bienvenido a la Fake Application";
+            string body = "Hola, bienvenido a bla bla bla bla bla bla bla bla";
+            return send_mail(mail, subject, body);
+        }
+
+        public static bool send_link_verification(string mail, string token)
+        {
+            try
+            {
+                string subject = "Link de verificacion para tu cuenta";
+                string link = "http://localhost:10380/Verification/link_verification?secure_token=" + token;
+                string body = db.Messages.Where(x => x.clave.Contains("register")).SingleOrDefault().body + link;
+                return send_mail(mail, subject, body);
+            }
+            catch {
+                return false;
+            }
+        }
+
+        private static bool send_mail(string mail, string subject, string body)
         {
             try
             {
@@ -23,7 +47,7 @@ namespace ws_SimpleMenu.classes
                     Credentials = new NetworkCredential(from_email, password),
                     EnableSsl = true
                 };
-                client.Send(from_email, mail, "test", "testbody");
+                client.Send(from_email, mail, subject, body);
                 return true;
             }
             catch {
