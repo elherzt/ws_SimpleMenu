@@ -163,6 +163,52 @@ namespace ws_SimpleMenu.Models
             }
         }
 
+        public static int verificate_account(string token)
+        {
+            if (db.Users.Where(x => x.token == token && x.verificated == false).ToList().Count() == 0)
+            {
+                return 0;
+            }
+            else {
+                if (isValidToken(token))
+                {
+                    return 1;
+                }
+                else {
+                    return 2;
+                }
+            }
+        }
+
+        private static bool isValidToken(string token)
+        {
+            var user = db.Users.Where(x => x.token == token && x.verificated == false).SingleOrDefault();
+            try
+            {
+                if (DateTime.Now.Subtract(user.register).Minutes <= Configuraciones.time_to_verificate_email)
+                {
+                    user.verificated = true;
+                    db.SaveChanges();
+                    return true;
+                }
+                else {
+                    var new_token = Guid.NewGuid().ToString();
+                    user.token = new_token;
+                    user.register = DateTime.Now;
+                    db.SaveChanges();
+                    Mailer.send_link_verification(user.email, new_token);
+                    return false;
+                }
+            }catch{
+                var new_token = Guid.NewGuid().ToString();
+                user.token = new_token;
+                user.register = DateTime.Now;
+                db.SaveChanges();
+                Mailer.send_link_verification(user.email, new_token);
+                return false;
+            }
+        }
+
         private static string GetIP()
         {
             //String strHostName = HttpContext.Current.Request.UserHostAddress.ToString();

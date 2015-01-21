@@ -128,9 +128,11 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="classes\Configuraciones.cs" />
     <Compile Include="classes\Estructuras.cs" />
+    <Compile Include="classes\Mailer.cs" />
     <Compile Include="Controllers\AddUserController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Controllers\VerificationController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -243,6 +245,9 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Verification\Verificated.cshtml" />
+    <Content Include="Views\Verification\Invalid.cshtml" />
+    <Content Include="Views\Verification\newToken.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

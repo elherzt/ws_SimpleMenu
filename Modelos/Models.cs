@@ -28,9 +28,21 @@ namespace Modelos
         public string password { get; set; }
         public int reference_id { get; set; }
         public bool locked { get; set; }
+        public bool verificated { get; set; }
+        public string token { get; set; }
+        public DateTime register { get; set; }
         public virtual List<Login> Logins { get; set; }
         public virtual List<Rol_User> Roles { get; set; }
         public virtual List<Lock> Locks { get; set; }
+    }
+
+
+    public class Message
+    {
+        [Key]
+        public int Id { get; set; }
+        public string clave { get; set; }
+        public string body { get; set; }
     }
 
     public class Rol
@@ -95,6 +107,7 @@ namespace Modelos
         public DbSet<Status> Status { get; set; }
         public DbSet<Login> Logins { get; set; }
         public DbSet<Lock> Locks { get; set; }
+        public DbSet<Message> Messages { get; set; }
     }
 
 }

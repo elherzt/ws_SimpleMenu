@@ -34,6 +34,8 @@ TestResult.xml
 [Rr]eleasePS/
 dlldata.c
 
+ws_SimpleMenu/Content/email.txt
+
 *_i.c
 *_p.c
 *_i.h

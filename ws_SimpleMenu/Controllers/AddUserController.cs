@@ -80,4 +80,21 @@ namespace ws_SimpleMenu.Controllers
             return LoginOptions.getRecentsLogins(id_user);
         }
     }
+
+    public class editUsernameController : ApiController
+    {
+        public Response Post(int id_user, string new_username)
+        {
+            return UserOptions.EditUsername(id_user, new_username);
+        }
+    }
+
+    public class editPasswordUserController : ApiController
+    {
+        public Response Post(int id_user, string old_password, string new_password, int secure)
+        {
+            return UserOptions.editPasswordUser(id_user, old_password, new_password, secure);
+        }
+    }
+
 }

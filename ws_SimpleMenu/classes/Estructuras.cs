@@ -12,6 +12,7 @@ namespace ws_SimpleMenu.classes
         public bool locked { get; set; }
         public string email { get; set; }
         public string username { get; set; }
+        public bool verificated { get; set; }
         public List<PrettyRoles> roles { get; set; }
 
         public static PrettyUser parseUserLogin(User user)
@@ -20,6 +21,7 @@ namespace ws_SimpleMenu.classes
             ul.email = user.email;
             ul.id_user = user.reference_id;
             ul.username = user.username;
+            ul.verificated = user.verificated;
             ul.roles = getRoles(user.Roles);
             return ul;
         }

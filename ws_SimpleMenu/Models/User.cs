@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Configuration;
 using System.Net.Mail;
+using ws_SimpleMenu.classes;
 
 namespace ws_SimpleMenu.Models
 {
@@ -19,15 +20,27 @@ namespace ws_SimpleMenu.Models
             Response response = new Response();
             try
             {
-                var message = isValid(user, secure);
+                var message = isValidUser(user, secure);
                 if (message == "valid")
                 {
+                    user.token = Guid.NewGuid().ToString();
+                    user.register = DateTime.Now;
                     user.locked = false;
+                    user.verificated = false;
                     db.Users.Add(user);
                     db.SaveChanges();
-                    response.succes = true;
-                    response.message = "User added";
-                    response.datos = user;
+                    if (Mailer.send_link_verification(user.email, user.token))
+                    {
+                        response.succes = true;
+                        response.message = "User added, verification link send to email";
+                        response.datos = null;
+                    }
+                    else
+                    {
+                        response.succes = false;
+                        response.message = "User added but email is not exists, account not verificated";
+                        response.datos = null;
+                    }
                 }
                 else
                 {
@@ -85,6 +98,110 @@ namespace ws_SimpleMenu.Models
             }
             catch(Exception e)
             {
+                response.succes = false;
+                response.message = e.Message;
+                response.datos = null;
+                return response;
+            }
+        }
+
+        public static Response EditUsername(int id_user, string username)
+        {
+            Response response = new Response();
+            try {
+                if (isValidIdUser(id_user))
+                {
+                    if (IsNewUsername(username))
+                    {
+                        var user = find_by_reference_id(id_user);
+                        user.username = username;
+                        db.SaveChanges();
+                        response.succes = true;
+                        response.message = "NO ERROR";
+                        response.datos = null;
+                    }
+                    else
+                    {
+                        response.succes = false;
+                        response.message = "Username current in use";
+                        response.datos = null;
+                    }
+                }
+                else {
+                    response.succes = false;
+                    response.message = "User not exists";
+                    response.datos = null;
+                }
+                return response;
+            }
+            catch(Exception e) {
+                response.succes = false;
+                response.message = e.Message;
+                response.datos = null;
+                return response;
+            }
+        }
+
+        public static Response editPasswordUser(int id_user, string old_password, string new_password, int secure)
+        {
+            Response response = new Response();
+            try {
+                if (isValidIdUser(id_user))
+                {
+                    var user = find_by_reference_id(id_user);
+                    var current_password = Encriptar.descifrar(user.password);
+                    if (current_password == Encriptar.descifrar(old_password))
+                    {
+                        if (secure == 0)
+                        {
+                            if (Encriptar.descifrar(new_password).Length >= 8)
+                            {
+                                user.password = new_password;
+                                db.SaveChanges();
+                                response.succes = true;
+                                response.message = "NO ERROR";
+                                response.datos = null;
+                            }
+                            else
+                            {
+                                response.succes = false;
+                                response.message = "Password is short";
+                                response.datos = null;
+                            }
+                        }
+                        else
+                        {
+                            if (isValidPassword(Encriptar.descifrar(new_password)))
+                            {
+                                user.password = new_password;
+                                db.SaveChanges();
+                                response.succes = true;
+                                response.message = "NO ERROR";
+                                response.datos = null;
+                            }
+                            else
+                            {
+                                response.succes = false;
+                                response.message = "Password is not valid";
+                                response.datos = null;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        response.succes = false;
+                        response.message = "Password is not equal";
+                        response.datos = null;
+                    }
+                }
+                else {
+                    response.succes = false;
+                    response.message = "User doesn't exists";
+                    response.datos = null;
+                }
+                return response;
+            }
+            catch(Exception e) {
                 response.succes = false;
                 response.message = e.Message;
                 response.datos = null;
@@ -250,7 +367,7 @@ namespace ws_SimpleMenu.Models
             }
         }
 
-        private static string isValid(User user, int? secure)
+        private static string isValidUser(User user, int? secure)
         {
             //string securePass = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$";
             string message = "";
@@ -258,11 +375,11 @@ namespace ws_SimpleMenu.Models
             {
                 if (isValidEmail(user.email))
                 {
-                    message += "0 Email: invalid,";
+                    message += "Email: valid,";
                 }
                 else
                 {
-                    message += "Email: valid,";
+                    message += "0 Email: invalid,";
                 }
             }
             else { 
@@ -284,7 +401,7 @@ namespace ws_SimpleMenu.Models
             }
             else if (secure == 1)
             {
-                if (Regex.IsMatch(password, @"^(?=.*[A-Z])(?=.*\d)(?!.*(.)\1\1)[a-zA-Z0-9@]{8,15}$")) // password valido: al menos 1 mayuscula, al menos 1 numero, no caracteres especiales, de 8 a 15
+                if (isValidPassword(password)) // password valido: al menos 1 mayuscula, al menos 1 numero, no caracteres especiales, de 8 a 15
                 {
                     message += "Password: valid,";
                 }
@@ -299,7 +416,7 @@ namespace ws_SimpleMenu.Models
             }catch{
                 message += "0 Password: wrong encrypted,";
             }
-            if (IsNew(user.username))
+            if (IsNewUsername(user.username))
             {
                 message += "Username: valid,";
             }
@@ -323,34 +440,34 @@ namespace ws_SimpleMenu.Models
             return message;
         }
 
+        private static bool isValidPassword(string password)
+        { 
+            Regex validPass = new Regex (@"^(?=.*[A-Z])(?=.*\d)(?!.*(.)\1\1)[a-zA-Z0-9@]{8,15}$");
+            Match match = (validPass.Match(password));
+            if (match.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private static bool isValidEmail(string email)
         {
-            Regex ValidEmail = new Regex(@"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*"
-            + "@"
-            + @"((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$");
-            Match match = (ValidEmail.Match(email));
-            if (match.Success)
+            return Mailer.send_welcome_mail(email);
+        }
+
+        private static bool isNewEmail(string p)
+        {
+            if ((db.Users.Where(x => x.email == p).ToList().Count()) == 0)
             {
                 return true;
             }
             else {
                 return false;
             }
-            //try
-            //{
-            //    MailAddress m = new MailAddress(email);
-
-            //    return true;
-            //}
-            //catch (FormatException)
-            //{
-            //    return false;
-            //}
-        }
-
-        private static bool isNewEmail(string p)
-        {
-            return (db.Users.Where(x => x.email == p).ToList().Count()) == 0 ? true : false;
         }
 
         private static bool referenceIsValid(int reference_id)
@@ -361,9 +478,15 @@ namespace ws_SimpleMenu.Models
             return (db.Users.Where(x => x.reference_id == reference_id).ToList().Count == 0) ? true : false;
         }
 
-        private static bool IsNew(string p)
+        private static bool IsNewUsername(string p)
         {
-           return (db.Users.Where(x => x.username == p.Trim()).ToList().Count == 0) ? true : false;
+            if (db.Users.Where(x => x.username == p.Trim()).ToList().Count == 0)
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
 
@@ -378,5 +501,7 @@ namespace ws_SimpleMenu.Models
         {
             return db.Users.Where(x => x.reference_id == id_reference).SingleOrDefault();
         }
+
+       
     }
 }
