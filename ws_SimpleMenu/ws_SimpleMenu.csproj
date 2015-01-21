@@ -128,6 +128,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="classes\Configuraciones.cs" />
     <Compile Include="classes\Estructuras.cs" />
+    <Compile Include="classes\Mailer.cs" />
     <Compile Include="Controllers\AddUserController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />

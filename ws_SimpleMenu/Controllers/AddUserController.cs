@@ -96,4 +96,12 @@ namespace ws_SimpleMenu.Controllers
             return UserOptions.editPasswordUser(id_user, old_password, new_password, secure);
         }
     }
+
+    public class sendEmailUserController : ApiController
+    {
+        public Response Post(string email)
+        {
+            return UserOptions.send_email(email);
+        }
+    }
 }

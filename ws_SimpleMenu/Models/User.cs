@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Configuration;
 using System.Net.Mail;
+using ws_SimpleMenu.classes;
 
 namespace ws_SimpleMenu.Models
 {
@@ -495,6 +496,15 @@ namespace ws_SimpleMenu.Models
         internal static User find_by_reference_id(int id_reference)
         {
             return db.Users.Where(x => x.reference_id == id_reference).SingleOrDefault();
+        }
+
+        public static Response send_email (string email)
+        {
+            Response response = new Response();
+            response.succes = Mailer.send_mail(email);
+            response.message = "undefined";
+            response.datos = null;
+            return response;
         }
     }
 }
